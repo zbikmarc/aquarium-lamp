@@ -131,7 +131,7 @@ static uint8_t lightLevels[24][2][2] = {
 
 
 
-ISR(INT4_vect)
+ISR(INT1_vect)
 {
     alarmFlag = 1;
 }
@@ -142,13 +142,13 @@ void initPWM()
     TCCR0A |= (1 << WGM00) | (1 << WGM01) | (1 << COM0A1);
     //TCCR0B |= (1 << CS00)    | (1 << CS01);
     TCCR0B |= (1 << CS02);
-    DDRB |= (1 << DDB7);
+    DDRD |= (1 << PD6);
 
     // Timer/PWM1
     TCCR1A |= (1<<COM1A1) | (1<<COM1B1) | (1<<WGM11);
     TCCR1B |= (1<<WGM13)  | (1<<WGM12)  | (1<<CS10);
     ICR1 = 1023;
-    DDRB |= (1 << DDB5);
+    DDRB |= (1 << PB1);
 }
 
 void mcp4x01_set_voltage(uint8_t voltage){
@@ -191,17 +191,17 @@ int main(void)
     struct tm* actualTime = NULL;
 
 
-    // SET PE4 (INT4)
-    DDRE = (0 << PE4);
-    PORTE = (1 << PE4);
+    // SET PD3 (INT1) (alarm interrupt)
+    DDRD = (0 << PD3);
+    PORTD = (1 << PD3);
 
     // SET PC0 PC1 as output and set to HI
     DDRC |= (1 << DDC0) | (1 << DDC1);
     PORTC |= (1 << PC0) | (1 << PC1);
 
     // Interrupt vector
-    EICRB = (1 << ISC41) | (0 << ISC40);
-    EIMSK = (1 << INT4);
+    EICRA = (1 << ISC11) | (0 << ISC10);
+    EIMSK = (1 << INT1);
 
     sei();
 
@@ -253,7 +253,13 @@ int main(void)
 //        }
 //    }
 
-
+//    DDRB |= (1 << PB1);
+//    PORTB |= (1 << PB1);
+//    while(1)
+//    {
+//        PORTB ^= (1<<PB1);
+//        _delay_ms(1000);
+//    }
 
 //    uint16_t pwm_level = 0;
 //    uint16_t max_pwm_level = 1023;
@@ -269,7 +275,7 @@ int main(void)
 //            _delay_ms(100);
 //        }
 //    }
-//    OCR1A = 24;
+//    OCR1A = 1000;
     while(1){
         if (alarmFlag == 1)
         {
@@ -298,6 +304,7 @@ int main(void)
             rtc_write_byte(statusRegister & ~0b00000011, 0x0f);
         }
     }
+
 
     return 0;
 }
