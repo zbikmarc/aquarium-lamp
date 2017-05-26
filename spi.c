@@ -13,10 +13,10 @@
 
 #define __SPI_PORT PORTB
 #define __SPI_DDR DDRB
-const uint8_t __SPI_MOSI = 2;
-const uint8_t __SPI_MISO = 3;
-const uint8_t __SPI_SCK = 1;
-const uint8_t __SPI_SS = 0;
+const uint8_t __SPI_MOSI = 3;
+const uint8_t __SPI_MISO = 4;
+const uint8_t __SPI_SCK = 5;
+const uint8_t __SPI_SS = 2;
 const uint8_t __SPI_LSBFIRST_MASK = 0b00000001;
 const uint8_t __SPI_MASTER_MASK = 0b00000001;
 const uint8_t __SPI_MODE_MASK = 0b00000011;
