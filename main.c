@@ -23,7 +23,6 @@
 #include <inttypes.h>
 
 #include "spi.h"
-#include "uart.h"
 
 #include "ds3231/rtc.h"
 
@@ -184,10 +183,6 @@ void mcp4x01_set_voltage(uint8_t voltage){
 int main(void)
 {
     uint8_t statusRegister, controlRegister;
-    uint8_t i = 0;
-    uint8_t level[] = {0, 63, 127, 195, 255, 195 ,127, 63};
-    //uint8_t level[] = {0, 0, 64, 64, 128, 128 , 250, 250};
-    char buffer[256];
     struct tm* actualTime = NULL;
 
 
@@ -207,24 +202,17 @@ int main(void)
 
     spi_init(0,1,0,1,0);
     initPWM();
-    uart_init((UART_BAUD_SELECT((BAUD),F_CPU)));
     twi_init_master();
     rtc_init();
 
-//    actualTime->sec = 0;
-//    actualTime->min = 5;
-//    actualTime->hour = 19;
-//    actualTime->mon = 5;
-//    actualTime->mday = 27;
-//    actualTime->wday = 6;
-//    actualTime->year = 2017;
-//    rtc_set_time(actualTime);
-
-    uart_puts("test\n\r");
-
-    actualTime = rtc_get_time();
-    sprintf(buffer, "%d-%02d-%02d %02d:%02d:%02d\n\r", actualTime->year, actualTime->mon, actualTime->mday, actualTime->hour, actualTime->min, actualTime->sec);
-    uart_puts(buffer);
+    actualTime->sec = 0;
+    actualTime->min = 17;
+    actualTime->hour = 12;
+    actualTime->mon = 5;
+    actualTime->mday = 28;
+    actualTime->wday = 7;
+    actualTime->year = 2017;
+    rtc_set_time(actualTime);
 
     // Set Alarm 1: when sec = 30
     rtc_write_byte(0b00110000, 0x07);
@@ -245,59 +233,17 @@ int main(void)
     controlRegister = rtc_read_byte(0x0e);
     rtc_write_byte(controlRegister | 0b00000111, 0x0e);
 
-//    while(1){
-//        for(i=0; i < 8; i++)
-//        {
-//            mcp4x01_set_voltage(level[i]);
-//            OCR1A = level[i];
-//            _delay_ms(5000);
-//        }
-//    }
-
-//    DDRB |= (1 << PB1);
-//    PORTB |= (1 << PB1);
-//    while(1)
-//    {
-//        PORTB ^= (1<<PB1);
-//        _delay_ms(1000);
-//    }
-
-//    uint16_t pwm_level = 0;
-//    uint16_t max_pwm_level = 1023;
-//    while(1)
-//    {
-//        for (pwm_level = 0; pwm_level < max_pwm_level; pwm_level += 2){
-//            OCR1A = pwm_level;
-//            _delay_ms(100);
-//        }
-//        for (pwm_level = max_pwm_level; pwm_level > 0; pwm_level -= 2)
-//        {
-//            OCR1A = pwm_level;
-//            _delay_ms(100);
-//        }
-//    }
-//    OCR1A = 1000;
-
     while(1){
         if (alarmFlag == 1)
         {
-            uart_puts("Alarm!\r\n");
-            actualTime = rtc_get_time();
-            sprintf(buffer, "%d-%02d-%02d %02d:%02d:%02d\n\r", actualTime->year, actualTime->mon, actualTime->mday, actualTime->hour, actualTime->min, actualTime->sec);
-            uart_puts(buffer);
-
 
             actualTime = rtc_get_time();
             if (actualTime->min < 30 ) {
                 mcp4x01_set_voltage(lightLevels[actualTime->hour][0][0]);
                 OCR1A = lightLevels[actualTime->hour][0][1];
-                sprintf(buffer, "mcp4x01 = %d\n\rOCR1A = %d\n\r", lightLevels[actualTime->hour][0][0], lightLevels[actualTime->hour][0][1]);
-                uart_puts(buffer);
             } else {
                 mcp4x01_set_voltage(lightLevels[actualTime->hour][1][0]);
                 OCR1A = lightLevels[actualTime->hour][1][1];
-                sprintf(buffer, "mcp4x01 = %d\n\rOCR1A = %d\n\r", lightLevels[actualTime->hour][1][0], lightLevels[actualTime->hour][1][1]);
-                uart_puts(buffer);
             }
 
             alarmFlag = 0;
