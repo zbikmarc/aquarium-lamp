@@ -155,7 +155,7 @@ void mcp4x01_set_voltage(uint8_t voltage){
     uint16_t packet = 0;
 
     // Set gain (  1 = 1x, 0 = 2x)
-    packet |= 1 << 13;
+    packet |= 0 << 13;
 
     // Activate mode (Vout available)
     packet |= 1 << 12;
@@ -212,11 +212,11 @@ int main(void)
     rtc_init();
 
 //    actualTime->sec = 0;
-//    actualTime->min = 49;
-//    actualTime->hour = 20;
+//    actualTime->min = 5;
+//    actualTime->hour = 19;
 //    actualTime->mon = 5;
-//    actualTime->mday = 16;
-//    actualTime->wday = 2;
+//    actualTime->mday = 27;
+//    actualTime->wday = 6;
 //    actualTime->year = 2017;
 //    rtc_set_time(actualTime);
 
@@ -249,7 +249,8 @@ int main(void)
 //        for(i=0; i < 8; i++)
 //        {
 //            mcp4x01_set_voltage(level[i]);
-//            _delay_ms(10000);
+//            OCR1A = level[i];
+//            _delay_ms(5000);
 //        }
 //    }
 
@@ -276,6 +277,7 @@ int main(void)
 //        }
 //    }
 //    OCR1A = 1000;
+
     while(1){
         if (alarmFlag == 1)
         {
@@ -304,7 +306,6 @@ int main(void)
             rtc_write_byte(statusRegister & ~0b00000011, 0x0f);
         }
     }
-
 
     return 0;
 }
