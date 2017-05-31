@@ -251,14 +251,14 @@ int main(void)
     twi_init_master();
     rtc_init();
 
-    actualTime->sec = 0;
-    actualTime->min = 11;
-    actualTime->hour = 22;
-    actualTime->mon = 5;
-    actualTime->mday = 28;
-    actualTime->wday = 7;
-    actualTime->year = 2017;
-    rtc_set_time(actualTime);
+//    actualTime->sec = 0;
+//    actualTime->min = 11;
+//    actualTime->hour = 22;
+//    actualTime->mon = 5;
+//    actualTime->mday = 28;
+//    actualTime->wday = 7;
+//    actualTime->year = 2017;
+//    rtc_set_time(actualTime);
 
     // Set Alarm 1: when sec = 30
     rtc_write_byte(0b00110000, 0x07);
